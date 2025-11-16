@@ -1,254 +1,86 @@
-# GuardianPilot - Situational Awareness Loss Detection System
+# GuardianPilot ✈️
 
-**Detect Loss of Situational Awareness Before It Becomes Fatal**
+> **Preventing spatial disorientation accidents through real-time situational awareness monitoring**
 
-Built for the Navi AI Aviation Hackathon
+[![Built for Navi AI Hackathon](https://img.shields.io/badge/Navi%20AI-Hackathon%202025-blue)](https://navi.ai)
+[![Powered by You.com](https://img.shields.io/badge/Powered%20by-You.com-orange)](https://you.com)
+[![Google Maps](https://img.shields.io/badge/Google-Maps%20API-green)](https://maps.google.com)
+
+## 🎯 Problem Statement
+
+**40% of general aviation fatal accidents** are caused by spatial disorientation and loss of situational awareness. Traditional warning systems only alert when parameters exceed thresholds—often **too late for recovery**.
+
+GuardianPilot detects **degrading situational awareness patterns** before they become critical, providing pilots with precious seconds to recover.
 
 ---
 
-## 🎯 What This Does
+## 🚀 Key Features
 
-GuardianPilot analyzes flight telemetry in real-time to detect when pilots are losing situational awareness - BEFORE it becomes critical. 
+### 1. **SA Score Algorithm (0-100)**
+Real-time situational awareness metric that quantifies pilot awareness based on flight telemetry patterns.
 
-**Detects 4 Deadly Patterns:**
-1. **Graveyard Spiral** - Spatial disorientation (40% of fatal GA accidents)
-2. **Altitude Unawareness** - CFIT prevention
-3. **Disoriented Maneuvering** - Early disorientation warning
-4. **Energy Mismanagement** - Stall/overspeed prevention
+- **100** = Perfect situational awareness
+- **70-85** = Caution (minor degradation)
+- **50-70** = Warning (significant degradation)
+- **<50** = Critical (immediate action required)
 
-## 🚀 Quick Start
+### 2. **Pattern-Based Detection**
+Detects four critical SA loss patterns:
 
-### 1. Install Dependencies
+| Pattern | Description | NTSB Relevance |
+|---------|-------------|----------------|
+| 🌀 **Graveyard Spiral** | Increasing bank + descent (spatial disorientation) | 40% of fatal GA accidents |
+| ⛰️ **Altitude Unawareness** | Descending into terrain without correction | CFIT accidents |
+| 🔄 **Disoriented Maneuvering** | Erratic inputs indicating pilot behind aircraft | Loss of control |
+| ⚡ **Energy Mismanagement** | Approaching stall or overspeed | Stall/spin accidents |
 
-```bash
-cd guardianpilot
-pip install -r requirements.txt
-```
+### 3. **You.com Integration** 🔍
+- Real-time NTSB incident database search
+- Historical context for each detected pattern
+- Lessons learned from similar accidents
+- Powered by You.com Search API
 
-### 2. Set Up API Key (Optional but Recommended)
+### 4. **Google Maps Visualization** 🗺️
+- Interactive terrain-aware flight path visualization
+- Detection markers with urgency color-coding
+- Toggle between terrain and satellite views
+- Measure distances and analyze spatial relationships
 
-For You.com incident context:
-```bash
-export YOU_API_KEY="your_you_api_key_here"
-```
+### 5. **Impact Analysis**
+Quantifies system effectiveness with before/after comparison:
 
-### 3. Run the Dashboard
-
-```bash
-streamlit run app.py
-```
-
-The dashboard will open in your browser at `http://localhost:8501`
-
-## 📁 Using Your Data
-
-### Supported Formats
-- CSV files with headers
-- JSON (array or object format)
-- Tab/space delimited text
-
-### Required Columns (flexible naming)
-The system automatically detects these column names:
-
-**Minimum Required:**
-- `altitude` (altitude_msl, ALT, etc.)
-- `airspeed` (ias, IAS, KIAS, etc.)
-- `bank` (bank_angle, roll, phi, etc.)
-- `vertical_speed` (vs, VS, vspeed, climb_rate, etc.)
-
-**Highly Recommended:**
-- `pitch` (pitch_angle, theta, etc.)
-- `altitude_agl` (height above ground)
-- `lat/lon` (for 3D visualization)
-- `load_factor` (nz, g, etc.)
-
-### Data Upload
-
-1. Click "Browse files" in the sidebar
-2. Select your flight data file
-3. System automatically:
-   - Detects file format
-   - Maps column names to standard format
-   - Calculates missing derived parameters
-   - Validates data quality
-
-## 📊 Using the Dashboard
-
-### Timeline Control
-- Use the **Time Position** slider to move through the flight
-- System analyzes a rolling window (default 60 seconds)
-- Detections update in real-time
-
-### Understanding Alerts
-
-**🔴 CRITICAL** - Immediate action required, <20 seconds to unrecoverable
-**🟡 HIGH** - Urgent attention needed, pattern developing
-**🟢 NORMAL** - All parameters within safe limits
-
-### Recovery Guidance
-Each alert includes:
-- Primary action (what to do RIGHT NOW)
-- Step-by-step recovery procedure
-- Critical warnings about what NOT to do
-- Related NTSB incidents for context
-
-## 🧪 Testing With Sample Data
-
-Click "Load Sample Data" in the dashboard to see a simulated graveyard spiral based on the JFK Jr. accident.
-
-## 📂 Project Structure
-
-```
-guardianpilot/
-├── app.py                      # Main Streamlit dashboard
-├── config.py                   # Configuration and thresholds
-├── requirements.txt            # Python dependencies
-├── src/
-│   ├── data_parser.py         # Universal data parser
-│   ├── pattern_detector.py   # Detection engine (4 patterns)
-│   ├── guidance_generator.py # Recovery guidance
-│   └── you_api.py            # You.com API integration
-├── data/                      # Put your data files here
-└── output/                    # Analysis results saved here
-```
-
-## 🔧 Customization
-
-### Adjust Detection Thresholds
-
-Edit `config.py` to tune sensitivity:
-
-```python
-GRAVEYARD_SPIRAL_CONFIG = {
-    "bank_angle_threshold": 25,      # degrees
-    "descent_rate_threshold": -800,  # fpm
-    # ... etc
-}
-```
-
-### Add Your Aircraft Limits
-
-```python
-AIRCRAFT_LIMITS = {
-    "stall_speed_clean": 120,      # KIAS
-    "never_exceed_speed": 575,     # KIAS
-    # ... etc
-}
-```
-
-## 📖 Technical Details
-
-### Detection Algorithms
-
-**Graveyard Spiral**
-- Based on JFK Jr. accident telemetry (NTSB NYC99MA178)
-- Detects: Increasing bank + increasing descent + increasing airspeed
-- Alert timing: 15-20 seconds before critical condition
-
-**Altitude Unawareness**
-- Monitors altitude AGL + descent rate
-- Checks for lack of corrective action
-- Terrain clearance warnings
-
-**Disoriented Maneuvering**
-- Analyzes control input variance over time
-- Detects increasing oscillations
-- Early indicator before full disorientation
-
-**Energy Mismanagement**
-- Monitors airspeed trends vs. aircraft limits
-- Approaching stall or Vne detection
-- Accounts for aircraft type
-
-### Data Processing Pipeline
-
-```
-Raw Data → Parser → Standardization → Window Buffer → 
-Pattern Detection → Guidance Generation → Visualization
-```
-
-## 🌐 Google Cloud Integration (Optional)
-
-For large datasets:
-
-```python
-# Set environment variables
-export GCS_BUCKET="your-bucket-name"
-export GCS_PROJECT="your-project-id"
-
-# The system will automatically use GCS if configured
-```
-
-## 🐛 Troubleshooting
-
-**"No data loaded"**
-- Check file format is CSV/JSON/TXT
-- Ensure file has headers
-- Verify columns are named reasonably
-
-**"Pattern detection not available"**
-- Check which columns are present
-- Review `data_parser.py` column mappings
-- Add your column names to COLUMN_MAPPINGS dict
-
-**"You.com API error"**
-- Set YOU_API_KEY environment variable
-- System will fall back to cached incidents if API unavailable
-
-## 📈 Performance Metrics
-
-System has been validated against:
-- JFK Jr. accident (graveyard spiral detection)
-- Multiple NTSB CFIT reports
-- Synthetic test scenarios
-
-**Detection Performance:**
-- Average warning time: 18 seconds before critical
-- False positive rate: <5% on normal flight data
-- Coverage: 40% of fatal GA accidents (spatial disorientation)
-
-## 🏆 For Hackathon Judges
-
-### Innovation
-- First system to detect SA loss vs. outcome (terrain, stall)
-- Pattern-based vs. threshold-based detection
-- Real accident data validation (JFK Jr. telemetry)
-
-### Impact
-- Addresses #1 human factor in aviation (40% of fatalities)
-- Deployable as iPad/EFB app
-- No aircraft integration required
-
-### Technical Merit
-- Multi-modal pattern detection
-- Real-time analysis with <1s latency
-- Extensible architecture
-
-### Demo Flow
-1. Load sample data (JFK Jr. simulation)
-2. Watch detection develop in real-time
-3. Show guidance generation
-4. Compare to actual accident timeline
-5. Demonstrate 18-second early detection
-
-## 📝 License & Credits
-
-Built for Navi AI Aviation Hackathon  
-Data sources: NTSB, FAA, AOPA
-
-## 🤝 Contributing
-
-This is a hackathon project, but improvements welcome:
-- Additional SA loss patterns
-- Better terrain database integration
-- Enhanced visualizations
-- Mobile app development
-
-## 📞 Contact
-
-Questions? Issues? Want to collaborate?  
-Built by Phoenix for aviation safety
+| Scenario | Warnings Provided | Lead Time |
+|----------|-------------------|-----------|
+| **Without GuardianPilot** | 0 | 0 seconds |
+| **With GuardianPilot** | ✅ Pattern-based alerts | **18+ seconds** early warning |
 
 ---
 
-**Remember: This is a proof-of-concept. Not for operational use without proper validation and certification.**
+## 📊 Demo
+
+![GuardianPilot Demo](https://via.placeholder.com/800x400.png?text=GuardianPilot+Demo+Screenshot)
+
+**Try it live:** [Demo Link](#) *(Add your deployed link)*
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend:** Streamlit
+- **Visualization:** Plotly, Folium (Google Maps integration)
+- **Data Processing:** Pandas, NumPy
+- **Pattern Detection:** Custom algorithms based on NTSB accident analysis
+- **APIs:**
+  - You.com Search API (incident context)
+  - Google Maps (terrain visualization)
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+- Python 3.8+
+- pip
+
+### Setup
+```bash
