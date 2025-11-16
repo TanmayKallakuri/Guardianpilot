@@ -56,12 +56,6 @@ Quantifies system effectiveness with before/after comparison:
 
 ---
 
-## 📊 Demo
-
-![GuardianPilot Demo](https://via.placeholder.com/800x400.png?text=GuardianPilot+Demo+Screenshot)
-
-**Try it live:** [Demo Link](#) *(Add your deployed link)*
-
 ---
 
 ## 🛠️ Technology Stack
